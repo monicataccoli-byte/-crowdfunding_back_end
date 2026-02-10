@@ -1,13 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import get_object_or_404
 from .models import Fundraiser, Pledge
-from .serializers import FundraiserSerializer, PledgeSerializer, FundraiserDetailSerializer
-from .permissions import IsOwnerOrReadOnly
+from .serializers import (
+    FundraiserSerializer,
+    PledgeSerializer,
+    FundraiserDetailSerializer,
+)
 
 class FundraiserList(APIView):
-    permissions_classes = [permissions. IsAuthenticatedOrReadOnly]
+    permissions_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request):
         fundraisers = Fundraiser.objects.all()
@@ -25,12 +28,12 @@ class FundraiserList(APIView):
 
 
 class FundraiserDetail(APIView):
-    permission_classes = [permissions .IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_object(self, pk):
         try:
             fundraiser = Fundraiser.objects.get(pk=pk)
-            self .check_object_permissions(self .request, fundraiser)
+            self.check_object_permissions(self.request, fundraiser)
             return fundraiser
         except Fundraiser.DoesNotExist:
             raise Http404
@@ -41,6 +44,7 @@ class FundraiserDetail(APIView):
 
     def put(self, request, pk):
         fundraiser = self.get_object(pk)
+        self.check_object_permissions(request, fundraiser)
         serializer = FundraiserDetailSerializer(
             instance=fundraiser, data=request.data, partial=True
         )
@@ -62,5 +66,4 @@ class PledgeList(APIView):
         if serializer.is_valid():
             serializer.save(supporter=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(status.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
