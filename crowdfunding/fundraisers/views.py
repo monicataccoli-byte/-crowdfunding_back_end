@@ -28,7 +28,8 @@ class FundraiserList(APIView):
 
 
 class FundraiserDetail(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permission.IsAuthenticatedOrReadOnly]
+    permission_classes = [permission.IsOwnerOrReadOnly]
 
     def get_object(self, pk):
         try:
@@ -37,6 +38,7 @@ class FundraiserDetail(APIView):
             return fundraiser
         except Fundraiser.DoesNotExist:
             raise Http404
+            return Response(serializer.data)
 
     def get(self, request, pk):
         fundraiser = self.get_object(pk)
