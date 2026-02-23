@@ -9,6 +9,7 @@ from .serializers import (
     FundraiserDetailSerializer,
 )
 
+
 class FundraiserList(APIView):
     permissions_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -43,6 +44,7 @@ class FundraiserDetail(APIView):
     def get(self, request, pk):
         fundraiser = self.get_object(pk)
         serializer = FundraiserDetailSerializer(fundraiser)
+        return Response(Serializer.data)
 
     def put(self, request, pk):
         fundraiser = self.get_object(pk)
