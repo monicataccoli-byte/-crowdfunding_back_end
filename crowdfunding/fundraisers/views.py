@@ -35,19 +35,11 @@ class FundraiserDetail(APIView):
         IsOwnerOrReadOnly
     ]
 
-    def get_object(self, pk):
-        try:
-            fundraiser = Fundraiser.objects.get(pk=pk)
-            self.check_object_permissions(self.request, fundraiser)
-            return fundraiser
-        except Fundraiser.DoesNotExist:
-            raise Http404
-            return Response(serializer.data)
-
+    
     def get(self, request, pk):
-        fundraiser = self.get_object(pk)
+        fundraiser = get_object_or_404(Fundraiser, pk=pk)
         serializer = FundraiserDetailSerializer(fundraiser)
-        return Response(Serializer.data)
+        return Response(serializer.data)
 
     def put(self, request, pk):
         fundraiser = self.get_object(pk)
