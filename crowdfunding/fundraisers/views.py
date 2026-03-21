@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from .permissions import IsOwnerOrReadOnly
 from rest_framework.generics import get_object_or_404
 from .models import Fundraiser, Pledge
 from .serializers import (
@@ -29,8 +30,10 @@ class FundraiserList(APIView):
 
 
 class FundraiserDetail(APIView):
-    permission_classes = [permission.IsAuthenticatedOrReadOnly]
-    permission_classes = [permission.IsOwnerOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    ]
 
     def get_object(self, pk):
         try:
